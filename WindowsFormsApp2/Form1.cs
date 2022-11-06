@@ -13,10 +13,6 @@ namespace WindowsFormsApp2
         public Form1()
         {
             InitializeComponent();
-
-            manuallyRadioButton.Checked = true;
-            constOneTextBox.Text = "-0.70176";
-            constTwoTextBox.Text = "-0.5842";
         }
 
         public void DrawFractal(int w, int h, Graphics g, Pen pen)
@@ -43,17 +39,10 @@ namespace WindowsFormsApp2
                 int maxIterations = 300;
 
                 //выбираем несколько значений константы С, это определяет форму фрактала Жюлиа
-                if (!randomRadioButton.Checked)
-                {
-                    cRe = Convert.ToDouble(constOneTextBox.Text.Replace(",", "."));
-                    cIm = Convert.ToDouble(constTwoTextBox.Text.Replace(",", "."));
-                }
-                else
-                {
-                    Random rand = new Random();
-                    cRe = rand.Next(-99999, 0) * 0.00001;
-                    cIm = rand.Next(-99999, 0) * 0.00001;
-                }
+                Random rand = new Random();
+                cRe = rand.Next(-99999, 0) * 0.00001;
+                cIm = rand.Next(-99999, 0) * 0.00001;
+                
 
                 
                 //"перебираем" каждый пиксель
@@ -118,18 +107,6 @@ namespace WindowsFormsApp2
         private void ExitBtn_Click(object sender, EventArgs e)
         {
             Close();
-        }
-
-        private void ManuallyRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-            constOneTextBox.Enabled = true;
-            constTwoTextBox.Enabled = true;
-        }
-
-        private void RandomRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-            constOneTextBox.Enabled = false;
-            constTwoTextBox.Enabled = false;
         }
 
     }
