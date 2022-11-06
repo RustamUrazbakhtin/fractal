@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -18,66 +13,92 @@ namespace WindowsFormsApp2
         public Form1()
         {
             InitializeComponent();
+
+            manuallyRadioButton.Checked = true;
+            constOneTextBox.Text = "-0.70176";
+            constTwoTextBox.Text = "-0.5842";
         }
 
         public void DrawFractal(int w, int h, Graphics g, Pen pen)
         {
-            // при каждой итерации, вычисляется znew = zold² + С
-            // вещественная  и мнимая части постоянной C
-            double cRe, cIm;
+            try
+            {
+                // при каждой итерации, вычисляется znew = zold² + С
+                // вещественная  и мнимая части постоянной C
+                double cRe;
+                double cIm;
 
-            // вещественная и мнимая части старой и новой
-            double newRe, newIm, oldRe, oldIm;
-            
-            // Можно увеличивать и изменять положение
-            double zoom = 1, moveX = 0, moveY = 0;
+                // вещественная и мнимая части старой и новой
+                double newRe;
+                double newIm;
+                double oldRe; 
+                double oldIm;
 
-            //Определяем после какого числа итераций функция должна прекратить свою работу
-            int maxIterations = 300;
+                // Можно увеличивать и изменять положение
+                double zoom = 1;
+                double moveX = 0;
+                double moveY = 0;
 
-            //выбираем несколько значений константы С, это определяет форму фрактала Жюлиа
-            cRe = -0.70176;
-            cIm = -0.5842;
+                //Определяем после какого числа итераций функция должна прекратить свою работу
+                int maxIterations = 300;
 
-            //cRe = rand.Next(-99999, 0) * 0.00001;
-            //cIm = rand.Next(-99999, 0) * 0.00001;
-
-            //"перебираем" каждый пиксель
-            for (int x = 0; x < w; x++)
-                for (int y = 0; y < h; y++)
+                //выбираем несколько значений константы С, это определяет форму фрактала Жюлиа
+                if (!randomRadioButton.Checked)
                 {
-                    //вычисляется реальная и мнимая части числа z
-                    //на основе расположения пикселей,масштабирования и значения позиции
-                    newRe = 1.5 * (x - w / 2) / (0.5 * zoom * w) + moveX;
-                    newIm = (y - h / 2) / (0.5 * zoom * h) + moveY;
-
-                    //i представляет собой число итераций 
-                    int i;
-
-                    //начинается процесс итерации
-                    for (i = 0; i < maxIterations; i++)
-                    {
-                        //Запоминаем значение предыдущей итерации
-                        oldRe = newRe;
-                        oldIm = newIm;
-
-                        // в текущей итерации вычисляются действительная и мнимая части 
-                        newRe = oldRe * oldRe - oldIm * oldIm + cRe;
-                        newIm = 2 * oldRe * oldIm + cIm;
-
-                        // если точка находится вне круга с радиусом 2 - прерываемся
-                        if ((newRe * newRe + newIm * newIm) > 4) break;
-                    }
-
-                    //определяем цвета
-                    pen.Color = Color.FromArgb(255, (i * 9) % 255, 0, (i * 9) % 255);
-                    //рисуем пиксель
-                    g.DrawRectangle(pen, x, y, 1, 1);
+                    cRe = Convert.ToDouble(constOneTextBox.Text.Replace(",", "."));
+                    cIm = Convert.ToDouble(constTwoTextBox.Text.Replace(",", "."));
                 }
+                else
+                {
+                    Random rand = new Random();
+                    cRe = rand.Next(-99999, 0) * 0.00001;
+                    cIm = rand.Next(-99999, 0) * 0.00001;
+                }
+
+                
+                //"перебираем" каждый пиксель
+                for (int x = 0; x < w; x++)
+                    for (int y = 0; y < h; y++)
+                    {
+                        //вычисляется реальная и мнимая части числа z
+                        //на основе расположения пикселей,масштабирования и значения позиции
+                        newRe = 1.5 * (x - w / 2) / (0.5 * zoom * w) + moveX;
+                        newIm = (y - h / 2) / (0.5 * zoom * h) + moveY;
+
+                        //i представляет собой число итераций 
+                        int i;
+
+                        //начинается процесс итерации
+                        for (i = 0; i < maxIterations; i++)
+                        {
+                            //Запоминаем значение предыдущей итерации
+                            oldRe = newRe;
+                            oldIm = newIm;
+
+                            // в текущей итерации вычисляются действительная и мнимая части 
+                            newRe = oldRe * oldRe - oldIm * oldIm + cRe;
+                            newIm = 2 * oldRe * oldIm + cIm;
+
+                            // если точка находится вне круга с радиусом 2 - прерываемся
+                            if ((newRe * newRe + newIm * newIm) > 4) break;
+                        }
+
+                        //определяем цвета
+                        pen.Color = Color.FromArgb(255, (i * 9) % 255, 0, (i * 9) % 255);
+                        //рисуем пиксель
+                        g.DrawRectangle(pen, x, y, 1, 1);
+                    }
+            }
+            catch (Exception ex)
+            {
+                // Обработчик ошибок
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private async void StartBtn_Click (object sender, EventArgs e)
         {
+            // Размеры картинки
             _widthPicture = pictureBox1.Width;
             _heightPicture = pictureBox1.Height;
 
@@ -98,5 +119,18 @@ namespace WindowsFormsApp2
         {
             Close();
         }
+
+        private void ManuallyRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            constOneTextBox.Enabled = true;
+            constTwoTextBox.Enabled = true;
+        }
+
+        private void RandomRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            constOneTextBox.Enabled = false;
+            constTwoTextBox.Enabled = false;
+        }
+
     }
 }
