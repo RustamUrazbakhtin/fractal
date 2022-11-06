@@ -12,28 +12,33 @@ namespace WindowsFormsApp2
 {
     public partial class Form1 : Form
     {
+        private int _widthPicture;
+        private int _heightPicture;
+
         public Form1()
         {
             InitializeComponent();
         }
 
-        public async Task DrawFractal(int w, int h, Graphics g, Pen pen)
+        public void DrawFractal(int w, int h, Graphics g, Pen pen)
         {
             // при каждой итерации, вычисляется znew = zold² + С
-
             // вещественная  и мнимая части постоянной C
             double cRe, cIm;
+
             // вещественная и мнимая части старой и новой
             double newRe, newIm, oldRe, oldIm;
+            
             // Можно увеличивать и изменять положение
             double zoom = 1, moveX = 0, moveY = 0;
+
             //Определяем после какого числа итераций функция должна прекратить свою работу
             int maxIterations = 300;
 
             //выбираем несколько значений константы С, это определяет форму фрактала Жюлиа
             cRe = -0.70176;
             cIm = -0.5842;
-            Random rand = new Random();
+
             //cRe = rand.Next(-99999, 0) * 0.00001;
             //cIm = rand.Next(-99999, 0) * 0.00001;
 
@@ -52,7 +57,6 @@ namespace WindowsFormsApp2
                     //начинается процесс итерации
                     for (i = 0; i < maxIterations; i++)
                     {
-
                         //Запоминаем значение предыдущей итерации
                         oldRe = newRe;
                         oldIm = newIm;
@@ -72,19 +76,25 @@ namespace WindowsFormsApp2
                 }
         }
 
-        private async Task button1_ClickAsync(object sender, EventArgs e)
+        private async void StartBtn_Click (object sender, EventArgs e)
         {
+            _widthPicture = pictureBox1.Width;
+            _heightPicture = pictureBox1.Height;
+
             //Выбираем перо "myPen" черного цвета Black
             //толщиной в 1 пиксель:
             Pen myPen = new Pen(Color.Black, 1);
+
             //Объявляем объект "g" класса Graphics и предоставляем
             //ему возможность рисования на pictureBox1:
             Graphics g = Graphics.FromHwnd(pictureBox1.Handle);
+
             //вызываем функцию рисования фрактала
-            await DrawFractal(840, 620, g, myPen);
+            //await Task.Run(() => DrawFractal(840, 620, g, myPen));
+            await Task.Run(() => DrawFractal(_widthPicture, _heightPicture, g, myPen));
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void ExitBtn_Click(object sender, EventArgs e)
         {
             Close();
         }
